@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>War Tracker</title>
+<style>
+body{
+background:black;
+color:white;
+text-align:center;
+font-family:Arial;
+}
+
+h1{
+color:red;
+margin-top:50px;
+}
+
+.counter{
+font-size:40px;
+margin-top:30px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>GLOBAL WAR LIVE TRACKER</h1>
+
+<div class="counter">
+War Cost: $<span id="money">500000000</span>
+</div>
+
+<script>
+
+let money = 500000000;
+
+setInterval(function(){
+money += 10000;
+document.getElementById("money").innerText = money;
+},1000);
+
+</script>
+
+</body>
+</html>
