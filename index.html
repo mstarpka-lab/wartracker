@@ -1,40 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>War Tracker</title>
+<meta charset="UTF-8">
+<title>Global War Live Tracker</title>
+
 <style>
+
 body{
-background:black;
+background:#0b0f1a;
 color:white;
-text-align:center;
 font-family:Arial;
+text-align:center;
+margin:0;
 }
 
 h1{
-color:red;
-margin-top:50px;
+color:#ff3b3b;
+margin-top:20px;
 }
 
-.counter{
-font-size:40px;
+.container{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:20px;
 margin-top:30px;
 }
+
+.card{
+background:#141b2d;
+padding:20px;
+width:250px;
+border-radius:12px;
+box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+.country{
+font-size:22px;
+margin-bottom:10px;
+}
+
+.dead{
+font-size:28px;
+color:#ff4747;
+}
+
+.stats{
+margin-top:40px;
+font-size:25px;
+}
+
+.map{
+margin-top:40px;
+}
+
+iframe{
+border-radius:10px;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>GLOBAL WAR LIVE TRACKER</h1>
+<h1>🌍 GLOBAL WAR LIVE TRACKER</h1>
 
-<div class="counter">
-War Cost: $<span id="money">500000000</span>
+<div class="container">
+
+<div class="card">
+<div class="country">🇮🇷 Iran</div>
+Deaths
+<div class="dead" id="iran">1200</div>
+</div>
+
+<div class="card">
+<div class="country">🇮🇱 Israel</div>
+Deaths
+<div class="dead" id="israel">900</div>
+</div>
+
+<div class="card">
+<div class="country">🇺🇸 USA</div>
+Deaths
+<div class="dead" id="usa">100</div>
+</div>
+
+</div>
+
+<div class="stats">
+💰 War Cost: $<span id="money">500000000</span><br><br>
+🚀 Missiles Fired: <span id="missiles">1200</span><br><br>
+💥 Explosions: <span id="explosions">340</span>
+</div>
+
+<div class="map">
+
+<h2>🌍 War Map</h2>
+
+<iframe width="90%" height="400"
+src="https://maps.google.com/maps?q=iran&t=&z=4&ie=UTF8&iwloc=&output=embed">
+</iframe>
+
 </div>
 
 <script>
 
+let iran = 1200;
+let israel = 900;
+let usa = 100;
+
 let money = 500000000;
+let missiles = 1200;
+let explosions = 340;
 
 setInterval(function(){
+
+iran += Math.floor(Math.random()*2);
+israel += Math.floor(Math.random()*2);
+usa += Math.floor(Math.random()*1);
+
+money += 20000;
+missiles += Math.floor(Math.random()*3);
+explosions += Math.floor(Math.random()*2);
+
+document.getElementById("iran").innerText = iran.toLocaleString();
+document.getElementById("israel").innerText = israel.toLocaleString();
+document.getElementById("usa").innerText = usa.toLocaleString();
+
+document.getElementById("money").innerText = money.toLocaleString();
+document.getElementById("missiles").innerText = missiles.toLocaleString();
+document.getElementById("explosions").innerText = explosions.toLocaleString();
+
+},1000);
+
+</script>
+
+</body>
+</html>{
 money += 10000;
 document.getElementById("money").innerText = money;
 },1000);
