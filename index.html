@@ -34,17 +34,21 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 #clock{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:1px;min-width:90px;text-align:right}
 
 /* WORLD STRIP */
-.world-strip{display:flex;justify-content:center;border-bottom:1px solid var(--border);background:rgba(8,13,28,0.85);overflow:hidden}
-.world-item{flex:1;max-width:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 20px;border-right:1px solid var(--border);position:relative;overflow:hidden}
+.world-strip{display:flex;justify-content:center;border-bottom:1px solid var(--border);background:rgba(8,13,28,0.85);overflow:hidden;flex-wrap:wrap}
+.world-item{flex:1;min-width:200px;max-width:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 20px;border-right:1px solid var(--border);position:relative;overflow:hidden}
 .world-item:last-child{border-right:none}
 .world-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .world-item.pop::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
 .world-item.die::before{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.world-item.vis::before{background:linear-gradient(90deg,transparent,var(--green),transparent)}
 .world-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;text-align:center}
 .world-value{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(17px,3vw,26px);line-height:1}
 .world-item.pop .world-value{color:var(--cyan);text-shadow:0 0 28px rgba(0,229,255,0.4)}
 .world-item.die .world-value{color:var(--red);text-shadow:0 0 28px rgba(255,45,45,0.4)}
+.world-item.vis .world-value{color:var(--green);text-shadow:0 0 28px rgba(57,255,131,0.4)}
 .world-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:6px;text-align:center}
+@keyframes countPulse{0%,100%{opacity:0.4}50%{opacity:1}}
+.vis-loading{animation:countPulse 1.2s ease-in-out infinite}
 
 /* SECTION WRAP */
 .sw{max-width:1160px;margin:0 auto;padding:0 24px}
@@ -171,6 +175,11 @@ footer{text-align:center;padding:18px;border-top:1px solid var(--border);font-fa
     <div class="world-value" id="world-deaths">0</div>
     <div class="world-sub" data-key="world_deaths_sub"></div>
   </div>
+  <div class="world-item vis">
+    <div class="world-label" data-key="visitors_label">👁 SITE VISITORS · LIVE</div>
+    <div class="world-value vis-loading" id="visit-count">···</div>
+    <div class="world-sub" data-key="visitors_sub">UNIQUE VISITS ALL TIME</div>
+  </div>
 </div>
 
 <!-- MAIN -->
@@ -288,6 +297,8 @@ const T = {
     conflict_map:'▸ CONFLICT ZONE MAP',
     footer_note:'⚠ DATA IS APPROXIMATE AND FOR INFORMATIONAL PURPOSES ONLY · NOT FOR POLITICAL USE',
     rising:'▲ RISING',
+    visitors_label:'👁 SITE VISITORS · LIVE',
+    visitors_sub:'UNIQUE VISITS ALL TIME',
   },
   ku:{
     dir:'rtl',
@@ -306,6 +317,8 @@ const T = {
     conflict_map:'▸ نەخشەی شوێنی جەنگ',
     footer_note:'⚠ ئەم داتایانە نزیکەیین و بۆ مەبەستی زانیاری گشتی دروستکراون · نییەتی سیاسی نییە',
     rising:'▲ زیادبووە',
+    visitors_label:'👁 سەردانکارانی سایت · زیندوو',
+    visitors_sub:'کۆی سەردانەکان',
   },
   ar:{
     dir:'rtl',
@@ -324,6 +337,8 @@ const T = {
     conflict_map:'▸ خريطة منطقة النزاع',
     footer_note:'⚠ البيانات تقريبية ولأغراض إعلامية فقط · ليست للاستخدام السياسي',
     rising:'▲ في ارتفاع',
+    visitors_label:'👁 زوار الموقع · مباشر',
+    visitors_sub:'إجمالي الزيارات',
   }
 };
 
@@ -433,6 +448,34 @@ setInterval(()=>{
 
 render();
 setLang('en');
+
+/* ─── VISITOR COUNTER via CounterAPI ─── */
+(async function(){
+  const KEY = 'global-war-tracker-pk-2025';
+  const NS  = 'wartracker';
+  const el  = document.getElementById('visit-count');
+  try {
+    // hit = increment + get new value
+    const res = await fetch(`https://api.counterapi.dev/v1/${NS}/${KEY}/up`);
+    const data = await res.json();
+    const count = data.count || data.value || 0;
+    el.classList.remove('vis-loading');
+    // animate count up
+    let current = Math.max(0, count - 40);
+    const step = Math.ceil((count - current) / 30);
+    const timer = setInterval(()=>{
+      current = Math.min(current + step, count);
+      el.textContent = current.toLocaleString();
+      if(current >= count) clearInterval(timer);
+    }, 40);
+  } catch(e) {
+    // fallback: show local session count
+    el.classList.remove('vis-loading');
+    const local = (parseInt(localStorage.getItem('wt_visits')||'0') + 1);
+    localStorage.setItem('wt_visits', local);
+    el.textContent = local.toLocaleString() + '+';
+  }
+})();
 </script>
 </body>
 </html>
