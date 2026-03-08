@@ -265,7 +265,7 @@ footer{text-align:center;padding:18px;border-top:1px solid var(--border);font-fa
 
 </div>
 
-<footer><span data-key="footer_note"></span></footer>
+<footer><div style="margin-bottom:10px;font-size:11px;color:#5a7090;letter-spacing:1px"><span style="color:#8090b0">CREATED BY</span> &nbsp;&nbsp;<span style="color:#c8d8f0;font-family:Rajdhani,sans-serif;font-size:13px;font-weight:600">عبدالسمیع صابر حسین</span> &nbsp;·&nbsp; <span style="color:#6a7a9a">دانیشتووی سلێمانی · چەمچەماڵ</span></div><div><span data-key="footer_note"></span></div></footer>
 </div>
 
 <script>
@@ -362,11 +362,14 @@ function worldDeaths(){
 }
 
 function fmt(n){return Math.floor(n).toLocaleString()}
+/* Always show war cost in MILLIONS so the scale is obvious */
 function fmtM(n){
-  if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';
-  if(n>=1e9) return'$'+(n/1e9).toFixed(2)+'B';
-  if(n>=1e6) return'$'+(n/1e6).toFixed(1)+'M';
-  return'$'+Math.floor(n).toLocaleString();
+  const millions = n / 1e6;
+  if(millions >= 1000){
+    /* show as e.g.  $138,600 MLN  (still readable as millions) */
+    return '$' + Math.floor(millions).toLocaleString() + ' MLN';
+  }
+  return '$' + Math.floor(millions).toLocaleString() + ' MLN';
 }
 function rnd(mx){return Math.random()<0.5?Math.floor(Math.random()*mx):0}
 
